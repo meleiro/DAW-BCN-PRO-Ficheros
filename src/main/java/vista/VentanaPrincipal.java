@@ -19,7 +19,7 @@ public class VentanaPrincipal extends JFrame {
     private DefaultTableModel modeloClientes, modeloProductos;
 
     public VentanaPrincipal() {
-        setTitle("Gestión de Clientes y Productos - Acceso a Datos");
+        setTitle("Gestión de Clientes y Productos");
         setSize(950, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
