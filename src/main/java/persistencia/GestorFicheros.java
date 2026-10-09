@@ -45,8 +45,25 @@ public class GestorFicheros {
      * @param datos objetos en memoria que hay que guardar
      */
     public static void exportarClientesTxt(Path ruta, List<Cliente> datos) throws IOException {
-        // TODO: escribir los objetos en el formato TXT.
-        throw new IOException("TODO: exportar clientes a TXT todavía no implementado");
+
+        try (BufferedWriter bw = Files.newBufferedWriter(ruta, StandardCharsets.UTF_8)) {
+
+
+            for (Cliente c : datos) {
+                bw.write(
+                        c.getId()
+                        + ";"
+                        + c.getNombre()
+                        + ";"
+                        + c.getEmail()
+                        + ";"
+                        + c.getTelefono()
+                );
+                bw.newLine();
+            }
+
+        }
+
     }
 
     /**
