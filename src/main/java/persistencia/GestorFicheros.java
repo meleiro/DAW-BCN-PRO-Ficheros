@@ -249,264 +249,33 @@ public class GestorFicheros {
          */
         StringBuilder actual = new StringBuilder();
 
-
-        /*
-         * ============================================================
-         * PASO 3: CONTROLAR SI ESTAMOS DENTRO DE COMILLAS
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Declarar una variable boolean llamada:
-         *
-         *      entreComillas
-         *
-         * Inicialmente debe valer false.
-         *
-         * Significado:
-         *
-         *      false -> estamos FUERA de un campo entrecomillado.
-         *
-         *      true  -> estamos DENTRO de un campo entrecomillado.
-         *
-         *
-         * ¿Por qué necesitamos esta variable?
-         *
-         * Porque una coma solamente separa campos cuando
-         * estamos FUERA de las comillas.
-         */
+        boolean entreComillas = false;
 
 
-        /*
-         * ============================================================
-         * PASO 4: RECORRER LA LÍNEA CARÁCTER A CARÁCTER
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Crear un bucle for que recorra todas las posiciones
-         * del String linea.
-         *
-         * PISTAS:
-         *
-         *      linea.length()
-         *
-         * devuelve la cantidad de caracteres.
-         *
-         *      linea.charAt(i)
-         *
-         * devuelve el carácter situado en la posición i.
-         *
-         *
-         * Dentro del for, guardar el carácter actual
-         * en una variable de tipo char.
-         *
-         *
-         * A continuación tendremos que distinguir TRES CASOS.
-         */
+        for (int i = 0 ; i < linea.length(); i++){
+            char c = linea.charAt(i);
 
+            if (c == '"') {
+                if (entreComillas && linea.charAt(i + 1) == '"' && i + 1 < linea.length()) {
+                    actual.append('"');
 
-        /*
-         * ============================================================
-         * CASO 1: EL CARÁCTER ES UNA COMILLA "
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Comprobar si el carácter actual es:
-         *
-         *      '"'
-         *
-         *
-         * Si encontramos una comilla, pueden ocurrir
-         * dos situaciones:
-         *
-         *
-         * SITUACIÓN A:
-         *
-         * Estamos DENTRO de comillas y el siguiente carácter
-         * también es una comilla.
-         *
-         * Ejemplo:
-         *
-         *      "Juan ""Pepe"""
-         *
-         * Las dos comillas que rodean Pepe representan
-         * una comilla real en el contenido.
-         *
-         * En este caso debemos:
-         *
-         *      1. Añadir UNA comilla a actual.
-         *
-         *      2. Avanzar una posición adicional del for,
-         *         porque hemos procesado DOS comillas juntas.
-         *
-         *
-         * PISTAS:
-         *
-         * Para comprobar si existe una posición siguiente:
-         *
-         *      i + 1 < linea.length()
-         *
-         * Para consultar el siguiente carácter:
-         *
-         *      linea.charAt(i + 1)
-         *
-         *
-         * SITUACIÓN B:
-         *
-         * La comilla no forma parte de una pareja "".
-         *
-         * Entonces abre o cierra un campo entrecomillado.
-         *
-         * TODO:
-         *
-         * Invertir el valor de entreComillas.
-         *
-         * PISTA:
-         *
-         * El operador ! permite invertir un boolean.
-         *
-         *      false -> true
-         *
-         *      true  -> false
-         */
+                    i++;
+                } else {
+                    entreComillas = !entreComillas;
 
+                }
+            } else if ( c == ',' && !entreComillas) {
+                campos.add(actual.toString());
+                actual.setLength(0);
+                } else {
+                    actual.append(c);
 
-        /*
-         * ============================================================
-         * CASO 2: EL CARÁCTER ES UNA COMA SEPARADORA
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Comprobar DOS condiciones:
-         *
-         *      1. El carácter actual es una coma.
-         *
-         *      2. NO estamos dentro de comillas.
-         *
-         *
-         * Recordatorio:
-         *
-         *      && significa AND lógico.
-         *
-         * Ambas condiciones deben cumplirse.
-         *
-         *
-         * Si encontramos una coma separadora significa que
-         * hemos terminado de leer un campo.
-         *
-         * Debemos:
-         *
-         *      1. Convertir actual a String.
-         *
-         *      2. Añadir ese String a la lista campos.
-         *
-         *      3. Vaciar actual para empezar el siguiente campo.
-         *
-         *
-         * PISTAS:
-         *
-         *      actual.toString()
-         *
-         *      campos.add(...)
-         *
-         *      actual.setLength(0)
-         */
+                }
 
+        }
+        campos.add(actual.toString());
+        return campos;
 
-        /*
-         * ============================================================
-         * CASO 3: CUALQUIER OTRO CARÁCTER
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Si no estamos en ninguno de los casos anteriores,
-         * el carácter pertenece al contenido del campo.
-         *
-         * Debemos añadirlo a actual.
-         *
-         * PISTA:
-         *
-         *      actual.append(...)
-         *
-         *
-         * ATENCIÓN:
-         *
-         * Una coma DENTRO de comillas también debe añadirse
-         * como contenido normal.
-         *
-         * Por ejemplo:
-         *
-         *      "Pérez, Juan"
-         *
-         * debe conservar la coma del nombre.
-         */
-
-
-        /*
-         * ============================================================
-         * PASO 5: AÑADIR EL ÚLTIMO CAMPO
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Cuando terminemos el for, tendremos que añadir
-         * a campos el contenido que quede en actual.
-         *
-         *
-         * ¿POR QUÉ?
-         *
-         * Porque los campos anteriores se añaden cuando
-         * encontramos una coma separadora.
-         *
-         * Pero el último campo NO termina con coma.
-         *
-         *
-         * Ejemplo:
-         *
-         *      1,Ana,Madrid
-         *
-         * Al encontrar las comas guardamos:
-         *
-         *      "1"
-         *      "Ana"
-         *
-         * Pero:
-         *
-         *      "Madrid"
-         *
-         * sigue dentro de actual cuando termina el bucle.
-         *
-         * Tenemos que añadirlo manualmente.
-         *
-         *
-         * PISTA:
-         *
-         *      campos.add(...)
-         */
-
-
-        /*
-         * ============================================================
-         * PASO 6: DEVOLVER EL RESULTADO
-         * ============================================================
-         *
-         * TODO:
-         *
-         * Devolver la lista campos.
-         *
-         * Recordad que el método devuelve:
-         *
-         *      List<String>
-         */
-
-        // TODO: sustituir esta línea por el código del alumno.
-        throw new UnsupportedOperationException(
-                "TODO: implementar parseCsv()"
-        );
     }
 
     /**
@@ -514,9 +283,20 @@ public class GestorFicheros {
      * @param ruta fichero destino (Path)
      * @param datos objetos en memoria que hay que guardar
      */
-    public static void exportarClientesCsv(Path ruta, List<Cliente> datos) throws IOException {
-        // TODO: escribir los objetos en el formato CSV.
-        throw new IOException("TODO: exportar clientes a CSV todavía no implementado");
+    public static void exportarClientesCsv(Path ruta, List<Cliente> clientes) throws IOException {
+
+        try (BufferedWriter bw = Files.newBufferedWriter(ruta, StandardCharsets.UTF_8)) {
+            bw.write("id,nombre,email,telefono");
+            bw.newLine();
+
+            for (Cliente c: clientes){
+                bw.write(c.getId() + "," + csv(c.getNombre()) + "," + csv(c.getEmail()) + "," + csv(c.getTelefono()));
+                bw.newLine();
+            }
+
+        }
+
+
     }
 
     /**
