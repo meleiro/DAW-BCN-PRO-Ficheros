@@ -305,10 +305,22 @@ public class GestorFicheros {
      * @return objetos reconstruidos; devolver lista vacía si el fichero válido no contiene registros
      */
     public static List<Cliente> importarClientesCsv(Path ruta) throws IOException {
-        // TODO: leer el fichero y reconstruir objetos Cliente.
-        // No devolver new ArrayList<>() como sustituto provisional:
-        // la interfaz reemplaza su lista actual por el resultado.
-        throw new IOException("TODO: importar clientes desde CSV todavía no implementado");
+
+        List<Cliente> resultado = new ArrayList<>();
+        try(BufferedReader br = Files.newBufferedReader(ruta, StandardCharsets.UTF_8)){
+            String linea = br.readLine();
+            while ((linea = br.readLine()) != null){
+                 List<String> l = parseCsv(linea);
+                 if (l.size() != 4) continue;
+                 try {
+                     resultado.add(new Cliente(Integer.parseInt(l.get(0)), l.get(1), l.get(2), l.get(3)));
+                 }catch (NumberFormatException e){
+                     System.err.println("Cliente CSV incorrecto " + linea);
+                 }
+
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -340,8 +352,7 @@ public class GestorFicheros {
      * @param datos objetos en memoria que hay que guardar
      */
     public static void exportarClientesXml(Path ruta, List<Cliente> datos) throws IOException {
-        // TODO: escribir los objetos en el formato XML.
-        throw new IOException("TODO: exportar clientes a XML todavía no implementado");
+        XML_MAPPER.writeValue(ruta.toFile(), datos);
     }
 
     /**
@@ -350,10 +361,11 @@ public class GestorFicheros {
      * @return objetos reconstruidos; devolver lista vacía si el fichero válido no contiene registros
      */
     public static List<Cliente> importarClientesXml(Path ruta) throws IOException {
-        // TODO: leer el fichero y reconstruir objetos Cliente.
-        // No devolver new ArrayList<>() como sustituto provisional:
-        // la interfaz reemplaza su lista actual por el resultado.
-        throw new IOException("TODO: importar clientes desde XML todavía no implementado");
+        List<Cliente> clientes = new ArrayList<>();
+        clientes = XML_MAPPER.readValue(ruta.toFile(), new TypeReference<List<Cliente>>() {
+        });
+
+        return clientes;
     }
 
     /**
